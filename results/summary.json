@@ -1,0 +1,23 @@
+{
+  "random": {
+    "final_accuracy": 0.81,
+    "final_recall": 0.67,
+    "max_accuracy": 0.81,
+    "total_labels": 500,
+    "num_rounds": 5
+  },
+  "uncertainty": {
+    "final_accuracy": 0.8800000000000001,
+    "final_recall": 0.78,
+    "max_accuracy": 0.8800000000000001,
+    "total_labels": 500,
+    "num_rounds": 5
+  },
+  "hybrid": {
+    "final_accuracy": 0.9,
+    "final_recall": 0.79,
+    "max_accuracy": 0.9,
+    "total_labels": 500,
+    "num_rounds": 5
+  }
+}
