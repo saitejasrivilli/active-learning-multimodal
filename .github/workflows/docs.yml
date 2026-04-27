@@ -1,0 +1,64 @@
+name: Documentation & Release
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Validate README
+      run: |
+        if [ -f README.md ]; then
+          wc -l README.md
+          echo "✓ README exists"
+        else
+          echo "✗ README.md not found"
+          exit 1
+        fi
+    
+    - name: Check documentation files
+      run: |
+        echo "Checking documentation files:"
+        [ -f README.md ] && echo "✓ README.md" || echo "✗ README.md"
+        [ -f EXECUTION_GUIDE.md ] && echo "✓ EXECUTION_GUIDE.md" || echo "✗ EXECUTION_GUIDE.md"
+        [ -f PROJECT_STRUCTURE.md ] && echo "✓ PROJECT_STRUCTURE.md" || echo "✗ PROJECT_STRUCTURE.md"
+
+  release:
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+    
+    - name: Create Release Notes
+      run: |
+        echo "# Release ${{ steps.version.outputs.VERSION }}" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## Features" >> RELEASE_NOTES.md
+        echo "- Active Learning System" >> RELEASE_NOTES.md
+        echo "- Multimodal Content Moderation" >> RELEASE_NOTES.md
+        echo "- Production-Ready Deployment" >> RELEASE_NOTES.md
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body_path: RELEASE_NOTES.md
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

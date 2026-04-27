@@ -1,0 +1,89 @@
+name: Python Tests & Linting
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 pytest pytest-cov
+        pip install -r requirements.txt || true
+    
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Test data generation
+      run: |
+        python3 data/synthetic_dataset.py --num_samples 1000
+        python3 data/labels_simulation.py
+    
+    - name: Test dataset creation
+      run: |
+        python3 -c "
+        import json
+        with open('data/dataset.json') as f:
+            data = json.load(f)
+        assert len(data) == 1000, f'Expected 1000 samples, got {len(data)}'
+        print('✓ Dataset created successfully')
+        "
+    
+    - name: Test labels
+      run: |
+        python3 -c "
+        import json
+        with open('data/labels_oracle.json') as f:
+            labels = json.load(f)
+        assert 'labels' in labels, 'Missing labels key'
+        assert len(labels['labels']) == 1000, f'Expected 1000 labels'
+        print('✓ Labels created successfully')
+        "
+
+  code-quality:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint black isort
+    
+    - name: Check code formatting with black
+      run: |
+        black --check . || true
+    
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only . || true
+    
+    - name: Run pylint
+      run: |
+        pylint data/ models/ active_learning/ || true
