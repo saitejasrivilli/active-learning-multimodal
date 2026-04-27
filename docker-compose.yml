@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  al-system:
+    build: .
+    container_name: active-learning-system
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+      - ./models:/app/models
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DEVICE=cpu
+    command: python3 lightweight_al.py
+    ports:
+      - "8501:8501"
+    networks:
+      - al-network
+
+  streamlit:
+    build: .
+    container_name: streamlit-demo
+    volumes:
+      - ./:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: streamlit run app.py --server.port=8501
+    ports:
+      - "8502:8501"
+    depends_on:
+      - al-system
+    networks:
+      - al-network
+
+networks:
+  al-network:
+    driver: bridge
+
+volumes:
+  data:
+  results:
+  models:
