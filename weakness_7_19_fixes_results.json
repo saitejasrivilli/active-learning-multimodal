@@ -1,0 +1,129 @@
+{
+  "load_testing": {
+    "qps_tested": 10000,
+    "p50_latency_ms": 34.5812799741699,
+    "p95_latency_ms": 96.3183492442403,
+    "p99_latency_ms": 126.21137205090155,
+    "max_latency_ms": 155.73780853038465,
+    "latency_target_ms": 100,
+    "meets_target": true,
+    "recommendation": "Production-ready"
+  },
+  "label_noise": {
+    "true_accuracy": 0.87,
+    "analysis": {
+      "80%": {
+        "labeler_accuracy": 0.8,
+        "effective_accuracy": 0.6960000000000001,
+        "degradation": 0.17399999999999993
+      },
+      "84%": {
+        "labeler_accuracy": 0.8375,
+        "effective_accuracy": 0.728625,
+        "degradation": 0.14137500000000003
+      },
+      "88%": {
+        "labeler_accuracy": 0.875,
+        "effective_accuracy": 0.76125,
+        "degradation": 0.10875000000000001
+      },
+      "91%": {
+        "labeler_accuracy": 0.9125,
+        "effective_accuracy": 0.793875,
+        "degradation": 0.076125
+      },
+      "95%": {
+        "labeler_accuracy": 0.95,
+        "effective_accuracy": 0.8265,
+        "degradation": 0.04349999999999998
+      }
+    },
+    "recommendation": "Use label aggregation (multiple annotators) to reduce noise"
+  },
+  "retraining_frequency": {
+    "schedules": {
+      "weekly": {
+        "frequency_days": 7,
+        "labels_per_round": 500,
+        "total_labels_per_year": 26000,
+        "cost_per_year": 52000,
+        "model_freshness_days": 7,
+        "missed_trend_days": 7
+      },
+      "daily": {
+        "frequency_days": 1,
+        "labels_per_round": 500,
+        "total_labels_per_year": 182500,
+        "cost_per_year": 365000,
+        "model_freshness_days": 1,
+        "missed_trend_days": 1
+      },
+      "monthly": {
+        "frequency_days": 30,
+        "labels_per_round": 500,
+        "total_labels_per_year": 6000,
+        "cost_per_year": 12000,
+        "model_freshness_days": 30,
+        "missed_trend_days": 30
+      }
+    },
+    "recommendation": "Weekly retraining balances cost and freshness. Use drift detection for immediate retraining if needed."
+  },
+  "drift_detection": {
+    "js_divergence": 0.03521415482771578,
+    "threshold": 0.1,
+    "shifted": false,
+    "action": "CONTINUE",
+    "severity": "NORMAL"
+  },
+  "temporal_performance": {
+    "weeks_monitored": 52,
+    "initial_accuracy": 0.8609278088141223,
+    "final_accuracy": 0.8985005452410103,
+    "min_accuracy": 0.8290683213846942,
+    "max_accuracy": 0.9027889516475027,
+    "degradation_detected": "False",
+    "recommendation": "Monitor"
+  },
+  "adversarial_misspelling": {
+    "agreement_with_misspelling": 0.993,
+    "robustness": "HIGH",
+    "recommendation": "Consider data augmentation with typos during training"
+  },
+  "adversarial_perturbation": {
+    "agreement_with_perturbation": 0.983,
+    "robustness": "HIGH",
+    "perturbations_tested": "brightness, contrast, rotation, noise",
+    "recommendation": "Use adversarial training or data augmentation"
+  },
+  "multilingual_plan": {
+    "current_support": "English only (DistilBERT base-uncased)",
+    "phase_1_3months": {
+      "model": "mBERT (Multilingual BERT)",
+      "languages": [
+        "Spanish",
+        "French",
+        "German",
+        "Chinese",
+        "Hindi"
+      ],
+      "effort_hours": 80,
+      "cost_estimate": "$5,000",
+      "expected_performance": "85%+ accuracy (vs 87% English)"
+    },
+    "phase_2_6months": {
+      "model": "XLM-R (Cross-lingual RoBERTa)",
+      "languages": "100+ languages",
+      "effort_hours": 120,
+      "cost_estimate": "$8,000",
+      "expected_performance": "86%+ accuracy across all languages"
+    },
+    "phase_3_12months": {
+      "model": "Custom multilingual fine-tuning",
+      "languages": "All TikTok languages",
+      "effort_hours": 200,
+      "cost_estimate": "$15,000",
+      "expected_performance": "87%+ accuracy"
+    }
+  }
+}
